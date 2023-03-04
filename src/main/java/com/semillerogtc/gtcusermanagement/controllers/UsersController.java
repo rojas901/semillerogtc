@@ -1,5 +1,6 @@
 package com.semillerogtc.gtcusermanagement.controllers;
 
+import com.semillerogtc.gtcusermanagement.common.EnviromentService;
 import com.semillerogtc.gtcusermanagement.domain.Usuario;
 import com.semillerogtc.gtcusermanagement.services.UsersService;
 import org.slf4j.Logger;
@@ -16,12 +17,15 @@ public class UsersController {
 
     //@Autowired //inyeccion de depencia por atributo de clase, hace dificil pruebas unitarias
     UsersService _user;
+    EnviromentService _enviromentService;
     public final Logger logger = LoggerFactory.getLogger(UsersController.class);
 
     //inyeccion por constructor es la forma adecuada, para reliazar pruebas unitarias
-    UsersController(UsersService user) {
+    UsersController(UsersService user, EnviromentService enviromentService) {
         logger.info("Se inicializa en el constructor");
         _user = user;
+        _enviromentService = enviromentService;
+        logger.info(_enviromentService.getEnviromentName());
     }
 
     /*@Autowired //inyeccion por metodo seeter, es parecido a inyeccion por constructor
