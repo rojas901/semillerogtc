@@ -1,13 +1,14 @@
 package com.semillerogtc.gtcusermanagement.common;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 @Service
-@Profile("Pro")
 @PropertySource("classpath:applicationprod.properties")
+@Qualifier("pro")
 public class ProEnviromentService implements EnviromentService {
 
     @Value("${environment.name:0}")
