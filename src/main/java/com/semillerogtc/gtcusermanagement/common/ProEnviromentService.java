@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 @PropertySource("classpath:applicationprod.properties")
-@Qualifier("pro")
 public class ProEnviromentService implements EnviromentService {
 
     @Value("${environment.name:0}")

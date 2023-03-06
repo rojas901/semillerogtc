@@ -23,7 +23,7 @@ public class UsersController {
     public final Logger logger = LoggerFactory.getLogger(UsersController.class);
 
     //inyeccion por constructor es la forma adecuada, para reliazar pruebas unitarias
-    UsersController(UsersService user, @Qualifier("qa") EnviromentService enviromentService) {
+    UsersController(UsersService user, @Qualifier("qaEnviromentService") EnviromentService enviromentService) {
         logger.info("Se inicializa en el constructor");
         _user = user;
         _enviromentService = enviromentService;

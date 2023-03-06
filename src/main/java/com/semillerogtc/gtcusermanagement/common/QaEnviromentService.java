@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 @Service
-@Qualifier("qa")
 public class QaEnviromentService implements EnviromentService {
     @Override
     public String getEnviromentName() {
