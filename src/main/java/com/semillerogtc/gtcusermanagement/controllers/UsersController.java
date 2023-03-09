@@ -2,15 +2,16 @@ package com.semillerogtc.gtcusermanagement.controllers;
 
 import com.semillerogtc.gtcusermanagement.common.EnviromentService;
 import com.semillerogtc.gtcusermanagement.domain.Usuario;
+import com.semillerogtc.gtcusermanagement.domain.UsuarioDto;
 import com.semillerogtc.gtcusermanagement.services.UsersService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("usuarios")
@@ -20,6 +21,7 @@ public class UsersController {
     UsersService _user;
 
     EnviromentService _enviromentService;
+
     public final Logger logger = LoggerFactory.getLogger(UsersController.class);
 
     //inyeccion por constructor es la forma adecuada, para reliazar pruebas unitarias
@@ -35,16 +37,45 @@ public class UsersController {
         logger.info("Se ejecuta metodo inicializar"); //se usa para generar logs en la consola con spring
         _user = user;
     }*/
-
+    //headers
     @GetMapping("ping")
-    public String ping() {
+    public String consultarUsuario1(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        logger.info(token);
         return "Hola desde el controlador de usuarios";
     }
-
-    @PostMapping("ping")
-    public Boolean registrarUsuario() {
+    //queryparams
+    @GetMapping
+    public Boolean consultarUsuario2(@RequestParam String nombre, @RequestParam String apellido) {
+        logger.info(nombre + " " + apellido);
         Usuario user = new Usuario();
         user.nombre = "Jeff";
         return _user.registrarUsuario(user);
     }
+    //params uritemplate
+    @GetMapping("consultar/{nombre}/{apellido}")
+    public Boolean consultarUsuario3(@PathVariable("nombre") String nombre, @PathVariable("apellido")String apellido) {
+        logger.info(nombre + " " + apellido);
+        Usuario user = new Usuario();
+        user.nombre = "Jeff";
+        return _user.registrarUsuario(user);
+    }
+
+    @PostMapping("/ping")
+    public Boolean registrarUsuario(@RequestBody UsuarioDto usuarioDto) {
+        logger.info(usuarioDto.nombre + " " + usuarioDto.apellido);
+        Usuario user = new Usuario();
+        user.nombre = "Jeff";
+        return _user.registrarUsuario(user);
+    }
+
+    @PatchMapping("/ping/{id}")
+    public UsuarioDto actualizarUsuario(@Valid @RequestBody UsuarioDto usuarioDto) {
+        return usuarioDto;
+    }
+
+    @DeleteMapping("/ping/{id}")
+    public int borrarUsuario(@PathVariable("id") int id) {
+        return id;
+    }
+
 }
