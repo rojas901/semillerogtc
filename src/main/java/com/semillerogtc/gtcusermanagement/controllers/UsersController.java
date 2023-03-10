@@ -3,12 +3,15 @@ package com.semillerogtc.gtcusermanagement.controllers;
 import com.semillerogtc.gtcusermanagement.common.EnviromentService;
 import com.semillerogtc.gtcusermanagement.domain.Usuario;
 import com.semillerogtc.gtcusermanagement.domain.UsuarioDto;
+import com.semillerogtc.gtcusermanagement.domain.UsuarioDto2;
 import com.semillerogtc.gtcusermanagement.services.UsersService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -61,6 +64,7 @@ public class UsersController {
     }
 
     @PostMapping("/ping")
+    @ResponseStatus(code=HttpStatus.CREATED, reason="")
     public Boolean registrarUsuario(@RequestBody UsuarioDto usuarioDto) {
         logger.info(usuarioDto.nombre + " " + usuarioDto.apellido);
         Usuario user = new Usuario();
@@ -68,8 +72,18 @@ public class UsersController {
         return _user.registrarUsuario(user);
     }
 
-    @PatchMapping("/ping/{id}")
+    @PostMapping("/ping2")
+    public ResponseEntity registrarUsuario(@RequestBody UsuarioDto2 usuarioDto) {
+        return new ResponseEntity<UsuarioDto2>(usuarioDto, HttpStatus.CREATED);
+    }
+
+    @PatchMapping("v1/ping/{id}")
     public UsuarioDto actualizarUsuario(@Valid @RequestBody UsuarioDto usuarioDto) {
+        return usuarioDto;
+    }
+
+    @PatchMapping("v2/ping/{id}")
+    public UsuarioDto2 actualizarUsuario(@Valid @RequestBody UsuarioDto2 usuarioDto) {
         return usuarioDto;
     }
 
