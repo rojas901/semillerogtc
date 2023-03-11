@@ -1,12 +1,13 @@
-package com.semillerogtc.gtcusermanagement.components;
+package com.semillerogtc.gtcusermanagement.domain.components;
 
 import com.semillerogtc.gtcusermanagement.domain.Usuario;
+import com.semillerogtc.gtcusermanagement.domain.UsuarioDto;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UsersValidation {
 
-    public boolean execute(Usuario user) {
+    public boolean execute(UsuarioDto user) {
 
         //return (user == "Jeff") ? true : false; operador ternario
 
@@ -16,7 +17,7 @@ public class UsersValidation {
           return false;
         */
 
-        return (user.nombre == "Jeff"); //retornar la condicion
+        return user.getNombre().equals("Jeff"); //retornar la condicion
 
     }
 }

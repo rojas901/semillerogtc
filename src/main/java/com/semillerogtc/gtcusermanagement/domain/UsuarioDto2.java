@@ -5,16 +5,10 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 public class UsuarioDto2 {
-
-    @NotEmpty(message = "El nombre no puede ser vacio")
-    @NotNull
-    @NotBlank
-    public String nombre;
-
-    @NotEmpty(message = "El apellido no puede ser vacio")
-    @NotNull
-    @NotBlank
-    public String apellido;
-
+    @NotEmpty
+    public String email;
+    @NotEmpty
+    public String userId;
+    @NotEmpty
     public String celular;
 }

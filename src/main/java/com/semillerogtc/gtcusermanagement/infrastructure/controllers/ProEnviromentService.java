@@ -1,5 +1,6 @@
-package com.semillerogtc.gtcusermanagement.common;
+package com.semillerogtc.gtcusermanagement.infrastructure.controllers;
 
+import com.semillerogtc.gtcusermanagement.common.EnviromentService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
