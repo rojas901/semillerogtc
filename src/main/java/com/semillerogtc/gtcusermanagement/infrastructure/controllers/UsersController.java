@@ -1,9 +1,8 @@
 package com.semillerogtc.gtcusermanagement.infrastructure.controllers;
 
-import com.semillerogtc.gtcusermanagement.common.EnviromentService;
+import com.semillerogtc.gtcusermanagement.infrastructure.environment.EnviromentService;
 import com.semillerogtc.gtcusermanagement.domain.Usuario;
-import com.semillerogtc.gtcusermanagement.domain.UsuarioDto;
-import com.semillerogtc.gtcusermanagement.domain.UsuarioDto2;
+import com.semillerogtc.gtcusermanagement.domain.UsuarioNuevoDto;
 import com.semillerogtc.gtcusermanagement.aplication.services.UsersService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,8 +46,13 @@ public class UsersController {
 
     //params uritemplate
     @GetMapping("/{id}")
-    public ResponseEntity consultarUsuario3(@PathVariable("id")String userId) {
-        return new ResponseEntity(_userService.consultarUsuario(userId), HttpStatus.OK);
+    public ResponseEntity consultarUsuarioById(@PathVariable("id")String userId) {
+        return new ResponseEntity(_userService.consultarUsuarioById(userId), HttpStatus.OK);
+    }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity consultarUsuarioByEmail(@PathVariable("email")String email) {
+        return new ResponseEntity(_userService.consultarUsuarioByEmail(email), HttpStatus.OK);
     }
 
     //headers
@@ -61,17 +65,17 @@ public class UsersController {
     @GetMapping("consultar")
     public ResponseEntity consultarUsuario2(@RequestParam String email) {
         logger.info(email);
-        UsuarioDto usuario = UsuarioDto.builder().email(email).build();
+        UsuarioNuevoDto usuario = UsuarioNuevoDto.builder().email(email).build();
         return new ResponseEntity(_userService.registrarUsuario(usuario),
                 HttpStatus.OK);
     }
 
     //@ResponseStatus(code=HttpStatus.CREATED, reason="")
     @PostMapping("v1")
-    public ResponseEntity registrarUsuario(@RequestBody UsuarioDto usuarioDto) {
-        logger.info(usuarioDto.getEmail() + "- " + usuarioDto.getCelular());
+    public ResponseEntity registrarUsuario(@Valid @RequestBody UsuarioNuevoDto usuarioNuevoDto) {
+        logger.info(usuarioNuevoDto.getEmail());
         try{
-            Usuario usuarioRegistrado = _userService.registrarUsuario(usuarioDto);
+            Usuario usuarioRegistrado = _userService.registrarUsuario(usuarioNuevoDto);
 
             return new ResponseEntity(usuarioRegistrado, HttpStatus.CREATED);
         } catch(Exception ex) {
@@ -80,16 +84,16 @@ public class UsersController {
     }
 
     @PostMapping("v2")
-    public ResponseEntity registrarUsuario2(@Valid @RequestBody UsuarioDto usuarioDto) {
-        Usuario usuarioRegistrado = _userService.registrarUsuario(usuarioDto);
+    public ResponseEntity registrarUsuario2(@Valid @RequestBody UsuarioNuevoDto usuarioNuevoDto) {
+        Usuario usuarioRegistrado = _userService.registrarUsuario(usuarioNuevoDto);
 
         return new ResponseEntity(usuarioRegistrado, HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity actualizarUsuario(@PathVariable("id") String id, @RequestBody UsuarioDto usuarioDto) {
+    public ResponseEntity actualizarUsuario(@PathVariable("id") String id, @RequestBody UsuarioNuevoDto usuarioNuevoDto) {
         try{
-            return new ResponseEntity(_userService.actualizarUsuario(id, usuarioDto), HttpStatus.OK);
+            return new ResponseEntity(_userService.actualizarUsuario(id, usuarioNuevoDto), HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }

@@ -1,13 +1,12 @@
 package com.semillerogtc.gtcusermanagement.domain.components;
 
-import com.semillerogtc.gtcusermanagement.domain.Usuario;
-import com.semillerogtc.gtcusermanagement.domain.UsuarioDto;
+import com.semillerogtc.gtcusermanagement.domain.UsuarioNuevoDto;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UsersValidation {
 
-    public boolean execute(UsuarioDto user) {
+    public boolean execute(UsuarioNuevoDto user) {
 
         //return (user == "Jeff") ? true : false; operador ternario
 

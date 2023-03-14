@@ -6,24 +6,28 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.util.Set;
 
 @Data
 @Entity
 @NoArgsConstructor
+@Table(name="usuarios")
 public class Usuario {
     //es una entidad porque maneja id o indentificador
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
-    @NotEmpty(message = "El parametro no es obligatorio")
+    @NotEmpty(message = "El nombre es obligatorio")
     private String nombre;
-    private String email;
+    @Convert(converter = EmailAttributeConverter.class)
+    private Email email;
     private Integer edad;
-    private long celular;
+
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "usuario_id", referencedColumnName = "id")
+    Set<UsuarioTelefono> telefonos;
 
 }

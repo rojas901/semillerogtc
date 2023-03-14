@@ -3,20 +3,18 @@ package com.semillerogtc.gtcusermanagement.domain;
 import lombok.Builder;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
-public class UsuarioDto {
+public class UsuarioNuevoDto {
     //solo se usa para transmitir mensajes
+    @NotEmpty(message = "Nombre es obligatorio")
     private String nombre;
-    @NotEmpty
+    @NotEmpty(message = "Email es obligatorio")
     private String email;
-    @NotEmpty
     private int edad;
-    private long celular;
-    private Date fechaNacimiento;
+    private List<String> telefonos;
 }

@@ -1,13 +1,13 @@
 package com.semillerogtc.gtcusermanagement.aplication.services;
 
-import com.semillerogtc.gtcusermanagement.domain.UsuarioDto;
-import com.semillerogtc.gtcusermanagement.domain.UsuariosRepositorio;
+import com.semillerogtc.gtcusermanagement.domain.*;
 import com.semillerogtc.gtcusermanagement.domain.components.UsersValidation;
-import com.semillerogtc.gtcusermanagement.domain.Usuario;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UsersService {
@@ -25,36 +25,48 @@ public class UsersService {
         return usuarios;
     }
 
-    public Optional<Usuario> consultarUsuario(String id) {
+    public Optional<Usuario> consultarUsuarioById(String id) {
 
         Optional<Usuario> usuario = _usuariosRepositorio.findById(id);
         return usuario;
     }
 
-    public Usuario registrarUsuario(UsuarioDto usuarioDto) {
+    public Usuario consultarUsuarioByEmail(String email) {
+        return _usuariosRepositorio.findByEmail(new Email(email));
+    }
+
+    public Usuario registrarUsuario(UsuarioNuevoDto usuarioNuevoDto) {
         //Usuario usuario = Usuario.builder().email("j").build();
-        boolean resultado = _usersValidation.execute(usuarioDto);
+        boolean resultado = _usersValidation.execute(usuarioNuevoDto);
 
-        Usuario usuarioARegistrar = new Usuario();
-        usuarioARegistrar.setNombre(usuarioDto.getNombre());
-        usuarioARegistrar.setEmail(usuarioDto.getEmail());
-        usuarioARegistrar.setEdad(usuarioDto.getEdad());
-        usuarioARegistrar.setCelular(usuarioDto.getCelular());
+        Usuario usuarioNuevo = new Usuario();
+        usuarioNuevo.setNombre(usuarioNuevoDto.getNombre());
+        usuarioNuevo.setEmail(new Email(usuarioNuevoDto.getEmail()));
+        usuarioNuevo.setEdad(usuarioNuevoDto.getEdad());
 
-        Usuario usuarioRegistrado = _usuariosRepositorio.save(usuarioARegistrar);
+        List<String> telefonos = usuarioNuevoDto.getTelefonos();
+        Set<UsuarioTelefono> telefonosSet = new HashSet<>();
+
+        for (String telefono : telefonos) {
+            UsuarioTelefono usuarioTelefono = new UsuarioTelefono();
+            usuarioTelefono.setTelefono(telefono);
+            telefonosSet.add(usuarioTelefono);
+        }
+
+        usuarioNuevo.setTelefonos(telefonosSet);
+
+        Usuario usuarioRegistrado = _usuariosRepositorio.save(usuarioNuevo);
 
         return usuarioRegistrado;
     }
 
-    public Usuario actualizarUsuario(String id, UsuarioDto usuarioDto) {
-        Usuario usuarioAActualizar = _usuariosRepositorio.getReferenceById(id);
+    public Usuario actualizarUsuario(String id, UsuarioNuevoDto usuarioNuevoDto) {
+        Usuario usuarioNuevo = _usuariosRepositorio.getReferenceById(id);
 
-        usuarioAActualizar.setNombre(usuarioDto.getNombre());
-        usuarioAActualizar.setEmail(usuarioDto.getEmail());
-        usuarioAActualizar.setEdad(usuarioDto.getEdad());
-        usuarioAActualizar.setCelular(usuarioDto.getCelular());
+        usuarioNuevo.setNombre(usuarioNuevoDto.getNombre());
+        usuarioNuevo.setEdad(usuarioNuevoDto.getEdad());
 
-        Usuario usuarioActualizado = _usuariosRepositorio.save(usuarioAActualizar);
+        Usuario usuarioActualizado = _usuariosRepositorio.save(usuarioNuevo);
 
         return usuarioActualizado;
     }
@@ -62,4 +74,5 @@ public class UsersService {
     public void eliminarUsuario(String userId) {
         _usuariosRepositorio.deleteById(userId);
     }
+
 }

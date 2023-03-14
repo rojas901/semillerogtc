@@ -1,4 +1,4 @@
-package com.semillerogtc.gtcusermanagement.common;
+package com.semillerogtc.gtcusermanagement.infrastructure.environment;
 
 public interface EnviromentService {
     public String getEnviromentName();
