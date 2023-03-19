@@ -4,10 +4,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.util.Date;
 import java.util.Set;
 
 @Data
@@ -29,5 +32,12 @@ public class Usuario {
     @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     Set<UsuarioTelefono> telefonos;
+
+    @CreationTimestamp
+    @Column(name="createdAt", nullable = false, updatable = false)
+    private Date createdAt;
+
+    @UpdateTimestamp
+    private Date modifyAt;
 
 }

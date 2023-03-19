@@ -64,7 +64,7 @@ public class UsersService {
         Usuario usuarioNuevo = _usuariosRepositorio.getReferenceById(id);
 
         usuarioNuevo.setNombre(usuarioNuevoDto.getNombre());
-        usuarioNuevo.setPassword(usuarioNuevoDto.getPassword());
+        //usuarioNuevo.setPassword(usuarioNuevoDto.getPassword());
 
         Usuario usuarioActualizado = _usuariosRepositorio.save(usuarioNuevo);
 
