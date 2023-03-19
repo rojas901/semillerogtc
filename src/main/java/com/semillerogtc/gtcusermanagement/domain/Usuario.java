@@ -24,7 +24,7 @@ public class Usuario {
     private String nombre;
     @Convert(converter = EmailAttributeConverter.class)
     private Email email;
-    private Integer edad;
+    private String password;
 
     @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")

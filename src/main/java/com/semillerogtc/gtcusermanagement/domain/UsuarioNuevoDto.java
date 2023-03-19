@@ -15,6 +15,6 @@ public class UsuarioNuevoDto {
     private String nombre;
     @NotEmpty(message = "Email es obligatorio")
     private String email;
-    private int edad;
+    private String password;
     private List<Telefono> telefonos;
 }

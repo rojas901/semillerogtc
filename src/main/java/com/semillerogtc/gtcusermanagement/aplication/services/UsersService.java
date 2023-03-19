@@ -42,7 +42,7 @@ public class UsersService {
         Usuario usuarioNuevo = new Usuario();
         usuarioNuevo.setNombre(usuarioNuevoDto.getNombre());
         usuarioNuevo.setEmail(new Email(usuarioNuevoDto.getEmail()));
-        usuarioNuevo.setEdad(usuarioNuevoDto.getEdad());
+        usuarioNuevo.setPassword(usuarioNuevoDto.getPassword());
 
         List<Telefono> telefonos = usuarioNuevoDto.getTelefonos();
         Set<UsuarioTelefono> telefonosSet = new HashSet<>();
@@ -64,7 +64,7 @@ public class UsersService {
         Usuario usuarioNuevo = _usuariosRepositorio.getReferenceById(id);
 
         usuarioNuevo.setNombre(usuarioNuevoDto.getNombre());
-        usuarioNuevo.setEdad(usuarioNuevoDto.getEdad());
+        usuarioNuevo.setPassword(usuarioNuevoDto.getPassword());
 
         Usuario usuarioActualizado = _usuariosRepositorio.save(usuarioNuevo);
 
