@@ -1,6 +1,7 @@
 package com.semillerogtc.gtcusermanagement.domain;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name="usuarios_telefonos")
@@ -12,11 +13,11 @@ public class UsuarioTelefono {
     @Convert(converter = TelefonoAttributeConverter.class)
     private Telefono telefono;
 
-    public String getTelefono() {
-        return telefono.getValue();
+    public List<String> getTelefono() {
+        return List.of(telefono.getNumber(), telefono.getCitycode(), telefono.getCountrycode());
     }
 
-    public void setTelefono(String telefono) {
-        this.telefono = new Telefono(telefono);
+    public void setTelefono(Telefono telefono) {
+        this.telefono = new Telefono(telefono.getNumber(), telefono.getCitycode(), telefono.getCountrycode());
     }
 }

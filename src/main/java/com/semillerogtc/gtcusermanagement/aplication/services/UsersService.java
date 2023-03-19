@@ -44,10 +44,10 @@ public class UsersService {
         usuarioNuevo.setEmail(new Email(usuarioNuevoDto.getEmail()));
         usuarioNuevo.setEdad(usuarioNuevoDto.getEdad());
 
-        List<String> telefonos = usuarioNuevoDto.getTelefonos();
+        List<Telefono> telefonos = usuarioNuevoDto.getTelefonos();
         Set<UsuarioTelefono> telefonosSet = new HashSet<>();
 
-        for (String telefono : telefonos) {
+        for (Telefono telefono : telefonos) {
             UsuarioTelefono usuarioTelefono = new UsuarioTelefono();
             usuarioTelefono.setTelefono(telefono);
             telefonosSet.add(usuarioTelefono);

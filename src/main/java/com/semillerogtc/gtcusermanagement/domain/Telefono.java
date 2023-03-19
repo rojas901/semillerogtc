@@ -1,17 +1,33 @@
 package com.semillerogtc.gtcusermanagement.domain;
 
 public class Telefono {
-    private String value;
+    private String number;
+    private String citycode;
+    private String countrycode;
 
-    public Telefono(String telefono) {
-        this.value = telefono;
+    public Telefono(String number, String citycode, String countrycode) {
+
+        this.number = number;
+        this.citycode = citycode;
+        this.countrycode = countrycode;
     }
 
-    public String getValue() {
-        return this.value;
+    public String getNumber() {
+
+        return this.number;
     }
 
-    public static Telefono instance(String telefono) {
-        return new Telefono(telefono);
+    public String getCitycode() {
+
+        return this.citycode;
+    }
+
+    public String getCountrycode() {
+
+        return this.countrycode;
+    }
+
+    public static Telefono instance(String number, String citycode, String countrycode) {
+        return new Telefono(number, citycode, countrycode);
     }
 }
