@@ -17,4 +17,8 @@ public class UsuarioNuevoDto {
     private String email;
     private String password;
     private List<Telefono> telefonos;
+
+    private Date lastAccess;
+
+    private boolean activo;
 }

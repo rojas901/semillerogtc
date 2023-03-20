@@ -4,10 +4,7 @@ import com.semillerogtc.gtcusermanagement.domain.*;
 import com.semillerogtc.gtcusermanagement.domain.components.UsersValidation;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class UsersService {
@@ -35,7 +32,7 @@ public class UsersService {
         return _usuariosRepositorio.findByEmail(new Email(email));
     }
 
-    public Usuario registrarUsuario(UsuarioNuevoDto usuarioNuevoDto) {
+    public UsuarioCreadoDto registrarUsuario(UsuarioNuevoDto usuarioNuevoDto) {
         //Usuario usuario = Usuario.builder().email("j").build();
         boolean resultado = _usersValidation.execute(usuarioNuevoDto);
 
@@ -43,6 +40,8 @@ public class UsersService {
         usuarioNuevo.setNombre(usuarioNuevoDto.getNombre());
         usuarioNuevo.setEmail(new Email(usuarioNuevoDto.getEmail()));
         usuarioNuevo.setPassword(usuarioNuevoDto.getPassword());
+        usuarioNuevo.setLastAccess(new Date());
+        usuarioNuevo.setActivo(true);
 
         List<Telefono> telefonos = usuarioNuevoDto.getTelefonos();
         Set<UsuarioTelefono> telefonosSet = new HashSet<>();
@@ -57,7 +56,17 @@ public class UsersService {
 
         Usuario usuarioRegistrado = _usuariosRepositorio.save(usuarioNuevo);
 
-        return usuarioRegistrado;
+        UsuarioCreadoDto usuarioCreadoDto = new UsuarioCreadoDto();
+
+        usuarioCreadoDto.setId(usuarioRegistrado.getId());
+        usuarioCreadoDto.setCreatedAt(usuarioRegistrado.getCreatedAt());
+        usuarioCreadoDto.setModifyAt(usuarioRegistrado.getModifyAt());
+        usuarioCreadoDto.setLastAccess(usuarioRegistrado.getLastAccess());
+        usuarioCreadoDto.setToken(usuarioRegistrado.getToken());
+        usuarioCreadoDto.setActivo(usuarioRegistrado.isActivo());
+
+
+        return usuarioCreadoDto;
     }
 
     public Usuario actualizarUsuario(String id, UsuarioNuevoDto usuarioNuevoDto) {

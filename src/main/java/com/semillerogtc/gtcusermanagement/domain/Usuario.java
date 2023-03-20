@@ -40,4 +40,10 @@ public class Usuario {
     @UpdateTimestamp
     private Date modifyAt;
 
+    private Date lastAccess;
+
+    private String token;
+
+    private boolean activo;
+
 }

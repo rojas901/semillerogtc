@@ -1,5 +1,6 @@
 package com.semillerogtc.gtcusermanagement.infrastructure.controllers;
 
+import com.semillerogtc.gtcusermanagement.domain.UsuarioCreadoDto;
 import com.semillerogtc.gtcusermanagement.infrastructure.environment.EnviromentService;
 import com.semillerogtc.gtcusermanagement.domain.Usuario;
 import com.semillerogtc.gtcusermanagement.domain.UsuarioNuevoDto;
@@ -75,20 +76,20 @@ public class UsersController {
     public ResponseEntity registrarUsuario(@Valid @RequestBody UsuarioNuevoDto usuarioNuevoDto) {
         logger.info(usuarioNuevoDto.getEmail());
         try{
-            Usuario usuarioRegistrado = _userService.registrarUsuario(usuarioNuevoDto);
+            UsuarioCreadoDto usuarioCreadoDto = _userService.registrarUsuario(usuarioNuevoDto);
 
-            return new ResponseEntity(usuarioRegistrado, HttpStatus.CREATED);
+            return new ResponseEntity(usuarioCreadoDto, HttpStatus.CREATED);
         } catch(Exception ex) {
             return new ResponseEntity("Falló la creación de usuario, Error: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PostMapping("v2")
+    /*@PostMapping("v2")
     public ResponseEntity registrarUsuario2(@Valid @RequestBody UsuarioNuevoDto usuarioNuevoDto) {
         Usuario usuarioRegistrado = _userService.registrarUsuario(usuarioNuevoDto);
 
         return new ResponseEntity(usuarioRegistrado, HttpStatus.CREATED);
-    }
+    }*/
 
     @PatchMapping("/{id}")
     public ResponseEntity actualizarUsuario(@PathVariable("id") String id, @RequestBody UsuarioNuevoDto usuarioNuevoDto) {
