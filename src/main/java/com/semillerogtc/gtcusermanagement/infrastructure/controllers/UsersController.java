@@ -5,6 +5,7 @@ import com.semillerogtc.gtcusermanagement.infrastructure.environment.EnviromentS
 import com.semillerogtc.gtcusermanagement.domain.Usuario;
 import com.semillerogtc.gtcusermanagement.domain.UsuarioNuevoDto;
 import com.semillerogtc.gtcusermanagement.aplication.services.UsersService;
+import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -74,11 +75,16 @@ public class UsersController {
     //@ResponseStatus(code=HttpStatus.CREATED, reason="")
     @PostMapping("v1")
     public ResponseEntity registrarUsuario(@Valid @RequestBody UsuarioNuevoDto usuarioNuevoDto) {
-        logger.info(usuarioNuevoDto.getEmail());
-        try{
-            UsuarioCreadoDto usuarioCreadoDto = _userService.registrarUsuario(usuarioNuevoDto);
+        //logger.info(usuarioNuevoDto.getEmail());
+        try {
+            Usuario usuarioExiste = _userService.consultarUsuarioByEmail(usuarioNuevoDto.getEmail());
+            if (usuarioExiste == null) {
+                UsuarioCreadoDto usuarioCreadoDto = _userService.registrarUsuario(usuarioNuevoDto);
 
-            return new ResponseEntity(usuarioCreadoDto, HttpStatus.CREATED);
+                return new ResponseEntity(usuarioCreadoDto, HttpStatus.CREATED);
+            }
+            return new ResponseEntity("El email, ya existe", HttpStatus.BAD_REQUEST);
+
         } catch(Exception ex) {
             return new ResponseEntity("Falló la creación de usuario, Error: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

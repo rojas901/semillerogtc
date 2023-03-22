@@ -25,6 +25,8 @@ public class Usuario {
     private String id;
     @NotEmpty(message = "El nombre es obligatorio")
     private String nombre;
+
+    @Column(name="email", unique = true)
     @Convert(converter = EmailAttributeConverter.class)
     private Email email;
     private String password;

@@ -1,6 +1,7 @@
 package com.semillerogtc.gtcusermanagement.aplication.services;
 
 import com.semillerogtc.gtcusermanagement.domain.*;
+import com.semillerogtc.gtcusermanagement.domain.components.JWTManagerService;
 import com.semillerogtc.gtcusermanagement.domain.components.UsersValidation;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +13,12 @@ public class UsersService {
     UsersValidation _usersValidation;
     UsuariosRepositorio _usuariosRepositorio;
 
-    UsersService(UsersValidation usersValidation, UsuariosRepositorio usuariosRepositorio) {
+    JWTManagerService _jwtManagerService;
+
+    UsersService(UsersValidation usersValidation, UsuariosRepositorio usuariosRepositorio, JWTManagerService jwtManagerService) {
         _usuariosRepositorio = usuariosRepositorio;
         _usersValidation = usersValidation;
+        _jwtManagerService = jwtManagerService;
     }
 
     public List<Usuario> consultarUsuarios() {
@@ -41,6 +45,7 @@ public class UsersService {
         usuarioNuevo.setEmail(new Email(usuarioNuevoDto.getEmail()));
         usuarioNuevo.setPassword(usuarioNuevoDto.getPassword());
         usuarioNuevo.setLastAccess(new Date());
+        usuarioNuevo.setToken(_jwtManagerService.generate(usuarioNuevoDto.getEmail()));
         usuarioNuevo.setActivo(true);
 
         List<Telefono> telefonos = usuarioNuevoDto.getTelefonos();
