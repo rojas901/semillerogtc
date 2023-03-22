@@ -2,6 +2,7 @@ package com.semillerogtc.gtcusermanagement.aplication.services;
 
 import com.semillerogtc.gtcusermanagement.domain.*;
 import com.semillerogtc.gtcusermanagement.domain.components.JWTManagerService;
+import com.semillerogtc.gtcusermanagement.domain.components.PasswordEncoderService;
 import com.semillerogtc.gtcusermanagement.domain.components.UsersValidation;
 import org.springframework.stereotype.Service;
 
@@ -12,13 +13,15 @@ public class UsersService {
 
     UsersValidation _usersValidation;
     UsuariosRepositorio _usuariosRepositorio;
-
     JWTManagerService _jwtManagerService;
 
-    UsersService(UsersValidation usersValidation, UsuariosRepositorio usuariosRepositorio, JWTManagerService jwtManagerService) {
+    PasswordEncoderService _passwordEncoderService;
+
+    UsersService(UsersValidation usersValidation, UsuariosRepositorio usuariosRepositorio, JWTManagerService jwtManagerService, PasswordEncoderService passwordEncoderService) {
         _usuariosRepositorio = usuariosRepositorio;
         _usersValidation = usersValidation;
         _jwtManagerService = jwtManagerService;
+        _passwordEncoderService = passwordEncoderService;
     }
 
     public List<Usuario> consultarUsuarios() {
@@ -43,7 +46,7 @@ public class UsersService {
         Usuario usuarioNuevo = new Usuario();
         usuarioNuevo.setNombre(usuarioNuevoDto.getNombre());
         usuarioNuevo.setEmail(new Email(usuarioNuevoDto.getEmail()));
-        usuarioNuevo.setPassword(usuarioNuevoDto.getPassword());
+        usuarioNuevo.setPassword(_passwordEncoderService.encode(usuarioNuevoDto.getPassword()));
         usuarioNuevo.setLastAccess(new Date());
         usuarioNuevo.setToken(_jwtManagerService.generate(usuarioNuevoDto.getEmail()));
         usuarioNuevo.setActivo(true);
