@@ -11,13 +11,16 @@ public class ProEnviromentService implements EnviromentService {
     @Value("${environment.name:0}")
     String nombre;
 
+    @Value("${environment.secret:0}")
+    String secreto;
+
     @Override
     public String getEnviromentName() {
         return nombre;
     }
 
     @Override
-    public String obtenerPoliticaDeClaveDeUsuario() {
-        return "[0-9{1}A-Z{1}a-z]";
+    public String getEnviromentSecret() {
+        return secreto;
     }
 }

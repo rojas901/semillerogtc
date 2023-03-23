@@ -1,11 +1,11 @@
 package com.semillerogtc.gtcusermanagement.infrastructure.controllers;
 
 import com.semillerogtc.gtcusermanagement.domain.UsuarioCreadoDto;
+import com.semillerogtc.gtcusermanagement.domain.UsuarioLoginDto;
 import com.semillerogtc.gtcusermanagement.infrastructure.environment.EnviromentService;
 import com.semillerogtc.gtcusermanagement.domain.Usuario;
 import com.semillerogtc.gtcusermanagement.domain.UsuarioNuevoDto;
 import com.semillerogtc.gtcusermanagement.aplication.services.UsersService;
-import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -64,13 +64,13 @@ public class UsersController {
         return "Hola desde el controlador de usuarios";
     }
     //queryparams
-    @GetMapping("consultar")
+    /*@GetMapping("consultar")
     public ResponseEntity consultarUsuario2(@RequestParam String email) {
         logger.info(email);
         UsuarioNuevoDto usuario = UsuarioNuevoDto.builder().email(email).build();
         return new ResponseEntity(_userService.registrarUsuario(usuario),
                 HttpStatus.OK);
-    }
+    }*/
 
     //@ResponseStatus(code=HttpStatus.CREATED, reason="")
     @PostMapping("v1")
@@ -79,14 +79,23 @@ public class UsersController {
         try {
             Usuario usuarioExiste = _userService.consultarUsuarioByEmail(usuarioNuevoDto.getEmail());
             if (usuarioExiste == null) {
-                UsuarioCreadoDto usuarioCreadoDto = _userService.registrarUsuario(usuarioNuevoDto);
+                UsuarioCreadoDto usuarioCreadoDto = _userService.registrarUsuario(usuarioNuevoDto, _enviromentService.getEnviromentSecret());
 
                 return new ResponseEntity(usuarioCreadoDto, HttpStatus.CREATED);
             }
             return new ResponseEntity("El email, ya existe", HttpStatus.BAD_REQUEST);
 
         } catch(Exception ex) {
-            return new ResponseEntity("Falló la creación de usuario, Error: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("v1/login")
+    public ResponseEntity login(@RequestBody UsuarioLoginDto usuarioLoginDto) {
+        try {
+            return new ResponseEntity(_userService.login(usuarioLoginDto), HttpStatus.OK);
+        }catch (Exception ex) {
+            return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 

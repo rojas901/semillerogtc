@@ -1,6 +1,7 @@
 package com.semillerogtc.gtcusermanagement.domain.components;
 
 import com.semillerogtc.gtcusermanagement.domain.Email;
+import com.semillerogtc.gtcusermanagement.infrastructure.environment.EnviromentService;
 import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -14,21 +15,20 @@ import java.util.Map;
 
 @Service
 public class JWTManagerService {
-    private String secret = "misecreto";
 
-    public String generate(String email) {
+    public String generate(String email, String secret) {
         Date expirationDate = new Date(System.currentTimeMillis() + (3600*3));
         String jwt = Jwts.builder()
                 .setSubject(email)
                 .setExpiration(expirationDate)
-                .signWith(SignatureAlgorithm.HS256, this.secret)
+                .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
         return jwt;
     }
 
-    public String validate(String jwt) {
+    public String validate(String jwt, String secret) {
         var result = Jwts.parser()
-                .setSigningKey(this.secret)
+                .setSigningKey(secret)
                 .parseClaimsJws(jwt)
                 .getBody()
                 .getSubject();

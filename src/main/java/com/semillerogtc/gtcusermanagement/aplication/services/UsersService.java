@@ -11,15 +11,15 @@ import java.util.*;
 @Service
 public class UsersService {
 
-    UsersValidation _usersValidation;
+    //UsersValidation _usersValidation;
     UsuariosRepositorio _usuariosRepositorio;
     JWTManagerService _jwtManagerService;
 
     PasswordEncoderService _passwordEncoderService;
 
-    UsersService(UsersValidation usersValidation, UsuariosRepositorio usuariosRepositorio, JWTManagerService jwtManagerService, PasswordEncoderService passwordEncoderService) {
+    UsersService(UsuariosRepositorio usuariosRepositorio, JWTManagerService jwtManagerService, PasswordEncoderService passwordEncoderService) {
         _usuariosRepositorio = usuariosRepositorio;
-        _usersValidation = usersValidation;
+        //_usersValidation = usersValidation;
         _jwtManagerService = jwtManagerService;
         _passwordEncoderService = passwordEncoderService;
     }
@@ -39,16 +39,16 @@ public class UsersService {
         return _usuariosRepositorio.findByEmail(new Email(email));
     }
 
-    public UsuarioCreadoDto registrarUsuario(UsuarioNuevoDto usuarioNuevoDto) {
+    public UsuarioCreadoDto registrarUsuario(UsuarioNuevoDto usuarioNuevoDto, String secret) {
         //Usuario usuario = Usuario.builder().email("j").build();
-        boolean resultado = _usersValidation.execute(usuarioNuevoDto);
+        //boolean resultado = _usersValidation.execute(usuarioNuevoDto);
 
         Usuario usuarioNuevo = new Usuario();
         usuarioNuevo.setNombre(usuarioNuevoDto.getNombre());
         usuarioNuevo.setEmail(new Email(usuarioNuevoDto.getEmail()));
         usuarioNuevo.setPassword(_passwordEncoderService.encode(usuarioNuevoDto.getPassword()));
         usuarioNuevo.setLastAccess(new Date());
-        usuarioNuevo.setToken(_jwtManagerService.generate(usuarioNuevoDto.getEmail()));
+        usuarioNuevo.setToken(_jwtManagerService.generate(usuarioNuevoDto.getEmail(), secret));
         usuarioNuevo.setActivo(true);
 
         List<Telefono> telefonos = usuarioNuevoDto.getTelefonos();
@@ -75,6 +75,19 @@ public class UsersService {
 
 
         return usuarioCreadoDto;
+    }
+
+    public String login(UsuarioLoginDto usuarioLoginDto) {
+
+        Usuario usuarioDB = _usuariosRepositorio.findByEmail(new Email(usuarioLoginDto.getEmail()));
+
+        boolean validarPassword = _passwordEncoderService.validarPassword(usuarioLoginDto.getPassword(), usuarioDB.getPassword());
+
+        if (validarPassword) {
+            return usuarioDB.getToken();
+        } else {
+            throw new InvalidUserException();
+        }
     }
 
     public Usuario actualizarUsuario(String id, UsuarioNuevoDto usuarioNuevoDto) {

@@ -1,16 +1,27 @@
 package com.semillerogtc.gtcusermanagement.infrastructure.environment;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 @Service
+@PropertySource("classpath:applicationdev.properties")
 public class DevEnviromentService implements EnviromentService {
+
+    @Value("${environment.name:0}")
+    String nombre;
+
+    @Value("${environment.secret:0}")
+    String secreto;
+
     @Override
     public String getEnviromentName() {
-        return "ambiente dev";
+        return nombre;
     }
 
     @Override
-    public String obtenerPoliticaDeClaveDeUsuario() {
-        return "[0-9A-ba-z]";
+    public String getEnviromentSecret() {
+        return secreto;
     }
+
 }
