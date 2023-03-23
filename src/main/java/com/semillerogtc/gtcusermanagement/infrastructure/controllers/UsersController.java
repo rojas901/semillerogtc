@@ -2,6 +2,7 @@ package com.semillerogtc.gtcusermanagement.infrastructure.controllers;
 
 import com.semillerogtc.gtcusermanagement.domain.UsuarioCreadoDto;
 import com.semillerogtc.gtcusermanagement.domain.UsuarioLoginDto;
+import com.semillerogtc.gtcusermanagement.domain.components.JWTManagerService;
 import com.semillerogtc.gtcusermanagement.infrastructure.environment.EnviromentService;
 import com.semillerogtc.gtcusermanagement.domain.Usuario;
 import com.semillerogtc.gtcusermanagement.domain.UsuarioNuevoDto;
@@ -25,14 +26,17 @@ public class UsersController {
 
     EnviromentService _enviromentService;
 
+    JWTManagerService _jwtManagerService;
+
     public final Logger logger = LoggerFactory.getLogger(UsersController.class);
 
     //inyeccion por constructor es la forma adecuada, para reliazar pruebas unitarias
-    UsersController(UsersService user, @Qualifier("qaEnviromentService") EnviromentService enviromentService) {
+    UsersController(UsersService user, @Qualifier("qaEnviromentService") EnviromentService enviromentService, JWTManagerService jwtManagerService) {
         logger.info("Se inicializa en el constructor");
         _userService = user;
         _enviromentService = enviromentService;
         logger.info(_enviromentService.getEnviromentName());
+        _jwtManagerService = jwtManagerService;
     }
 
     /*@Autowired //inyeccion por metodo seeter, es parecido a inyeccion por constructor
@@ -42,8 +46,13 @@ public class UsersController {
     }*/
 
     @GetMapping
-    public ResponseEntity consultarUsuarios() {
-        return new ResponseEntity<>(_userService.consultarUsuarios(), HttpStatus.OK);
+    public ResponseEntity consultarUsuarios(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        try{
+            _jwtManagerService.validate(token, _enviromentService.getEnviromentSecret());
+            return new ResponseEntity(_userService.consultarUsuarios(), HttpStatus.OK);
+        } catch(Exception ex) {
+            return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     //params uritemplate
@@ -109,7 +118,7 @@ public class UsersController {
     @PatchMapping("/{id}")
     public ResponseEntity actualizarUsuario(@PathVariable("id") String id, @RequestBody UsuarioNuevoDto usuarioNuevoDto) {
         try{
-            return new ResponseEntity(_userService.actualizarUsuario(id, usuarioNuevoDto), HttpStatus.OK);
+            return new ResponseEntity(_userService.actualizarUsuario(id, usuarioNuevoDto, _enviromentService.getEnviromentSecret()), HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }

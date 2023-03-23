@@ -84,17 +84,22 @@ public class UsersService {
         boolean validarPassword = _passwordEncoderService.validarPassword(usuarioLoginDto.getPassword(), usuarioDB.getPassword());
 
         if (validarPassword) {
+            usuarioDB.setLastAccess(new Date());
+            _usuariosRepositorio.save(usuarioDB);
             return usuarioDB.getToken();
         } else {
             throw new InvalidUserException();
         }
     }
 
-    public Usuario actualizarUsuario(String id, UsuarioNuevoDto usuarioNuevoDto) {
+    public Usuario actualizarUsuario(String id, UsuarioNuevoDto usuarioNuevoDto, String secret) {
         Usuario usuarioNuevo = _usuariosRepositorio.getReferenceById(id);
 
-        usuarioNuevo.setNombre(usuarioNuevoDto.getNombre());
-        //usuarioNuevo.setPassword(usuarioNuevoDto.getPassword());
+        usuarioNuevo.setEmail(new Email(usuarioNuevoDto.getEmail()));
+
+        usuarioNuevo.setPassword(_passwordEncoderService.encode(usuarioNuevoDto.getPassword()));
+
+        usuarioNuevo.setToken(_jwtManagerService.generate(usuarioNuevoDto.getEmail(), secret));
 
         Usuario usuarioActualizado = _usuariosRepositorio.save(usuarioNuevo);
 
