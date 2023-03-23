@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("usuarios")
 public class UsersController {
 
@@ -45,7 +46,7 @@ public class UsersController {
         _user = user;
     }*/
 
-    @GetMapping
+    @GetMapping("v1")
     public ResponseEntity consultarUsuarios(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         try{
             _jwtManagerService.validate(token, _enviromentService.getEnviromentSecret());
@@ -56,22 +57,32 @@ public class UsersController {
     }
 
     //params uritemplate
-    @GetMapping("/{id}")
-    public ResponseEntity consultarUsuarioById(@PathVariable("id")String userId) {
-        return new ResponseEntity(_userService.consultarUsuarioById(userId), HttpStatus.OK);
+    @GetMapping("v1/id/{id}")
+    public ResponseEntity consultarUsuarioById(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable("id")String userId) {
+        try{
+            _jwtManagerService.validate(token, _enviromentService.getEnviromentSecret());
+            return new ResponseEntity(_userService.consultarUsuarioById(userId), HttpStatus.OK);
+        } catch(Exception ex) {
+            return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @GetMapping("/email/{email}")
-    public ResponseEntity consultarUsuarioByEmail(@PathVariable("email")String email) {
-        return new ResponseEntity(_userService.consultarUsuarioByEmail(email), HttpStatus.OK);
+    @GetMapping("v1/email/{email}")
+    public ResponseEntity consultarUsuarioByEmail(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable("email")String email) {
+        try{
+            _jwtManagerService.validate(token, _enviromentService.getEnviromentSecret());
+            return new ResponseEntity(_userService.consultarUsuarioByEmail(email), HttpStatus.OK);
+        } catch(Exception ex) {
+            return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     //headers
-    @GetMapping("ping")
+    /*@GetMapping("ping")
     public String consultarUsuario1(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         logger.info(token);
         return "Hola desde el controlador de usuarios";
-    }
+    }*/
     //queryparams
     /*@GetMapping("consultar")
     public ResponseEntity consultarUsuario2(@RequestParam String email) {
@@ -82,7 +93,7 @@ public class UsersController {
     }*/
 
     //@ResponseStatus(code=HttpStatus.CREATED, reason="")
-    @PostMapping("v1")
+    @PostMapping("v1/registrarse")
     public ResponseEntity registrarUsuario(@Valid @RequestBody UsuarioNuevoDto usuarioNuevoDto) {
         //logger.info(usuarioNuevoDto.getEmail());
         try {
@@ -108,6 +119,24 @@ public class UsersController {
         }
     }
 
+    @PostMapping("v1")
+    public ResponseEntity crearUsuario(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @Valid @RequestBody UsuarioNuevoDto usuarioNuevoDto) {
+        //logger.info(usuarioNuevoDto.getEmail());
+        try {
+            _jwtManagerService.validate(token, _enviromentService.getEnviromentSecret());
+            Usuario usuarioExiste = _userService.consultarUsuarioByEmail(usuarioNuevoDto.getEmail());
+            if (usuarioExiste == null) {
+                UsuarioCreadoDto usuarioCreadoDto = _userService.registrarUsuario(usuarioNuevoDto, _enviromentService.getEnviromentSecret());
+
+                return new ResponseEntity(usuarioCreadoDto, HttpStatus.CREATED);
+            }
+            return new ResponseEntity("El email, ya existe", HttpStatus.BAD_REQUEST);
+
+        } catch(Exception ex) {
+            return new ResponseEntity(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     /*@PostMapping("v2")
     public ResponseEntity registrarUsuario2(@Valid @RequestBody UsuarioNuevoDto usuarioNuevoDto) {
         Usuario usuarioRegistrado = _userService.registrarUsuario(usuarioNuevoDto);
@@ -115,9 +144,10 @@ public class UsersController {
         return new ResponseEntity(usuarioRegistrado, HttpStatus.CREATED);
     }*/
 
-    @PatchMapping("/{id}")
-    public ResponseEntity actualizarUsuario(@PathVariable("id") String id, @RequestBody UsuarioNuevoDto usuarioNuevoDto) {
+    @PatchMapping("v1/{id}")
+    public ResponseEntity actualizarUsuario(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable("id") String id, @RequestBody UsuarioNuevoDto usuarioNuevoDto) {
         try{
+            _jwtManagerService.validate(token, _enviromentService.getEnviromentSecret());
             return new ResponseEntity(_userService.actualizarUsuario(id, usuarioNuevoDto, _enviromentService.getEnviromentSecret()), HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
@@ -125,10 +155,10 @@ public class UsersController {
 
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity eliminarUsuario(@PathVariable("id") String id) {
-
+    @DeleteMapping("v1/{id}")
+    public ResponseEntity eliminarUsuario(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable("id") String id) {
         try {
+            _jwtManagerService.validate(token, _enviromentService.getEnviromentSecret());
             _userService.eliminarUsuario(id);
             return new ResponseEntity("Usuario elminado con exito", HttpStatus.OK);
         } catch (Exception ex) {
