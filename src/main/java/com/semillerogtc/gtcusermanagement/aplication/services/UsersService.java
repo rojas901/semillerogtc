@@ -81,6 +81,10 @@ public class UsersService {
 
         Usuario usuarioDB = _usuariosRepositorio.findByEmail(new Email(usuarioLoginDto.getEmail()));
 
+        if (usuarioDB == null) {
+            throw new InvalidUserException();
+        }
+
         boolean validarPassword = _passwordEncoderService.validarPassword(usuarioLoginDto.getPassword(), usuarioDB.getPassword());
 
         if (validarPassword) {
