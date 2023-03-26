@@ -32,19 +32,46 @@ public class UsersService {
     public Optional<Usuario> consultarUsuarioById(String id) {
 
         Optional<Usuario> usuario = _usuariosRepositorio.findById(id);
+
+        if (usuario.isEmpty()) {
+            throw new InvalidIdException();
+        }
+
         return usuario;
     }
 
     public Usuario consultarUsuarioByEmail(String email) {
-        return _usuariosRepositorio.findByEmail(new Email(email));
+
+        Usuario usuarioDB = _usuariosRepositorio.findByEmail(new Email(email));
+
+        if (usuarioDB == null) {
+            throw new InvalidEmailException();
+        }
+
+        return usuarioDB;
+    }
+
+    public Usuario consultarUsuarioByNombre(String nombre) {
+
+        Usuario usuarioDB = _usuariosRepositorio.findByNombre(nombre.toLowerCase());
+
+        if (usuarioDB == null) {
+            throw new InvalidNameException();
+        }
+
+        return usuarioDB;
     }
 
     public UsuarioCreadoDto registrarUsuario(UsuarioNuevoDto usuarioNuevoDto, String secret) {
         //Usuario usuario = Usuario.builder().email("j").build();
         //boolean resultado = _usersValidation.execute(usuarioNuevoDto);
 
+        if (_usuariosRepositorio.findByEmail(new Email(usuarioNuevoDto.getEmail())) != null) {
+            throw new InvalidEmailExistException();
+        }
+
         Usuario usuarioNuevo = new Usuario();
-        usuarioNuevo.setNombre(usuarioNuevoDto.getNombre());
+        usuarioNuevo.setNombre(usuarioNuevoDto.getNombre().toLowerCase());
         usuarioNuevo.setEmail(new Email(usuarioNuevoDto.getEmail()));
         usuarioNuevo.setPassword(_passwordEncoderService.encode(usuarioNuevoDto.getPassword()));
         usuarioNuevo.setLastAccess(new Date());
@@ -98,6 +125,14 @@ public class UsersService {
 
     public Usuario actualizarUsuario(String id, UsuarioNuevoDto usuarioNuevoDto, String secret) {
         Usuario usuarioNuevo = _usuariosRepositorio.getReferenceById(id);
+
+        if (usuarioNuevo == null) {
+            throw new InvalidIdException();
+        }
+
+        if (_usuariosRepositorio.findByEmail(new Email(usuarioNuevoDto.getEmail())) != null) {
+            throw new InvalidEmailExistException();
+        }
 
         usuarioNuevo.setEmail(new Email(usuarioNuevoDto.getEmail()));
 

@@ -77,6 +77,16 @@ public class UsersController {
         }
     }
 
+    @GetMapping("v1/nombre/{nombre}")
+    public ResponseEntity consultarUsuarioByName(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable("nombre")String nombre) {
+        try{
+            _jwtManagerService.validate(token, _enviromentService.getEnviromentSecret());
+            return new ResponseEntity(_userService.consultarUsuarioByNombre(nombre), HttpStatus.OK);
+        } catch(Exception ex) {
+            return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     //headers
     /*@GetMapping("ping")
     public String consultarUsuario1(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
@@ -97,14 +107,9 @@ public class UsersController {
     public ResponseEntity registrarUsuario(@Valid @RequestBody UsuarioNuevoDto usuarioNuevoDto) {
         //logger.info(usuarioNuevoDto.getEmail());
         try {
-            Usuario usuarioExiste = _userService.consultarUsuarioByEmail(usuarioNuevoDto.getEmail());
-            if (usuarioExiste == null) {
-                UsuarioCreadoDto usuarioCreadoDto = _userService.registrarUsuario(usuarioNuevoDto, _enviromentService.getEnviromentSecret());
+            UsuarioCreadoDto usuarioCreadoDto = _userService.registrarUsuario(usuarioNuevoDto, _enviromentService.getEnviromentSecret());
 
-                return new ResponseEntity(usuarioCreadoDto, HttpStatus.CREATED);
-            }
-            return new ResponseEntity("El email, ya existe", HttpStatus.BAD_REQUEST);
-
+            return new ResponseEntity(usuarioCreadoDto, HttpStatus.CREATED);
         } catch(Exception ex) {
             return new ResponseEntity(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -116,24 +121,6 @@ public class UsersController {
             return new ResponseEntity(_userService.login(usuarioLoginDto), HttpStatus.OK);
         }catch (Exception ex) {
             return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @PostMapping("v1")
-    public ResponseEntity crearUsuario(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @Valid @RequestBody UsuarioNuevoDto usuarioNuevoDto) {
-        //logger.info(usuarioNuevoDto.getEmail());
-        try {
-            _jwtManagerService.validate(token, _enviromentService.getEnviromentSecret());
-            Usuario usuarioExiste = _userService.consultarUsuarioByEmail(usuarioNuevoDto.getEmail());
-            if (usuarioExiste == null) {
-                UsuarioCreadoDto usuarioCreadoDto = _userService.registrarUsuario(usuarioNuevoDto, _enviromentService.getEnviromentSecret());
-
-                return new ResponseEntity(usuarioCreadoDto, HttpStatus.CREATED);
-            }
-            return new ResponseEntity("El email, ya existe", HttpStatus.BAD_REQUEST);
-
-        } catch(Exception ex) {
-            return new ResponseEntity(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

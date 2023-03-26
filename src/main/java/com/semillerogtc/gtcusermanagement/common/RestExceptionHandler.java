@@ -1,9 +1,6 @@
 package com.semillerogtc.gtcusermanagement.common;
 
-import com.semillerogtc.gtcusermanagement.domain.InvalidEmailException;
-import com.semillerogtc.gtcusermanagement.domain.InvalidPasswordException;
-import com.semillerogtc.gtcusermanagement.domain.InvalidTokenException;
-import com.semillerogtc.gtcusermanagement.domain.InvalidUserException;
+import com.semillerogtc.gtcusermanagement.domain.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +34,21 @@ public class RestExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<ExceptionResponse> handleException(InvalidTokenException invalidTokenException) {
         return buildResponseEntity(HttpStatus.BAD_REQUEST, invalidTokenException);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ExceptionResponse> handleException(InvalidEmailExistException invalidEmailExistException) {
+        return buildResponseEntity(HttpStatus.BAD_REQUEST, invalidEmailExistException);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ExceptionResponse> handleException(InvalidNameException invalidNameException) {
+        return buildResponseEntity(HttpStatus.BAD_REQUEST, invalidNameException);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ExceptionResponse> handleException(InvalidIdException invalidIdException) {
+        return buildResponseEntity(HttpStatus.BAD_REQUEST, invalidIdException);
     }
 
     @ExceptionHandler
