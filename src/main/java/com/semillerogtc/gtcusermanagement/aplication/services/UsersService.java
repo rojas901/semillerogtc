@@ -130,13 +130,15 @@ public class UsersService {
             throw new InvalidIdException();
         }
 
-        if (_usuariosRepositorio.findByEmail(new Email(usuarioNuevoDto.getEmail())) != null) {
+        /*if (_usuariosRepositorio.findByEmail(new Email(usuarioNuevoDto.getEmail())) != null) {
             throw new InvalidEmailExistException();
-        }
+        }*/
 
         usuarioNuevo.setEmail(new Email(usuarioNuevoDto.getEmail()));
 
-        usuarioNuevo.setPassword(_passwordEncoderService.encode(usuarioNuevoDto.getPassword()));
+        if (!usuarioNuevoDto.getPassword().isEmpty()) {
+            usuarioNuevo.setPassword(_passwordEncoderService.encode(usuarioNuevoDto.getPassword()));
+        }
 
         usuarioNuevo.setToken(_jwtManagerService.generate(usuarioNuevoDto.getEmail(), secret));
 
