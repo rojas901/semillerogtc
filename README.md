@@ -2,15 +2,15 @@
 
 Esta aplicación es el proyecto final para el semillero realizado por GTC.
 
-Para usar la aplicación puede clonar el repositorio usando el siguiente comando `git clone https://github.com/rojas901/semillerogtc.git`.
+Para usar la aplicación puede clonar el repositorio usando el siguiente comando en su consola`git clone https://github.com/rojas901/semillerogtc.git`.
 
-Luego abrirla en su editor de codigo y ejecutar `mvn install`.
+Luego abrirla en su editor de codigo y ejecutar en consola `mvn install`.
 
-Por ultimo ejecutar `mvn spring-boot:run`, para iniciar la aplicación.
+Por ultimo ejecutar `mvn spring-boot:run` en la consola, para iniciar la aplicación.
 
 # REST API
 
-Luago que tenga la aplicación arriba, con la ayuda de postman podra probar las siguiente rutas
+Luego que tenga la aplicación arriba, con la ayuda de postman podra probar las siguiente rutas.
 
 ## Registrar usuario
 
