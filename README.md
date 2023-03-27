@@ -12,320 +12,115 @@ Por ultimo ejecutar `mvn spring-boot:run`, para iniciar la aplicación.
 
 Luago que tenga la aplicación arriba, con la ayuda de postman podra probar las siguiente rutas
 
-## Get list of Things
+## Registrar usuario
 
 ### Request
 
-`GET /thing/`
+Metodo: POST
 
-    curl -i -H 'Accept: application/json' http://localhost:7000/thing/
+URL: http://localhost:8080/usuarios/v1/registrarse
 
-### Response
+Body JSON:
+{
+    "nombre": String,
+	"email": String,
+	"password": String,
+	"telefonos": [
+		{
+			"number": String,
+			"citycode": String,
+			"countrycode": String
+		}
+	]
+}
 
-    HTTP/1.1 200 OK
-    Date: Thu, 24 Feb 2011 12:36:30 GMT
-    Status: 200 OK
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 2
+Nota: Registre varios usuarios para una mejor experiencia.
 
-    []
-
-## Create a new Thing
-
-### Request
-
-`POST /thing/`
-
-    curl -i -H 'Accept: application/json' -d 'name=Foo&status=new' http://localhost:7000/thing
-
-### Response
-
-    HTTP/1.1 201 Created
-    Date: Thu, 24 Feb 2011 12:36:30 GMT
-    Status: 201 Created
-    Connection: close
-    Content-Type: application/json
-    Location: /thing/1
-    Content-Length: 36
-
-    {"id":1,"name":"Foo","status":"new"}
-
-## Get a specific Thing
+## Login con usuario creado
 
 ### Request
 
-`GET /thing/id`
+Metodo: POST
 
-    curl -i -H 'Accept: application/json' http://localhost:7000/thing/1
+URL: http://localhost:8080/usuarios/v1/login
 
-### Response
+Body JSON:
+{
+    "email": String,
+	"password": String
+}
 
-    HTTP/1.1 200 OK
-    Date: Thu, 24 Feb 2011 12:36:30 GMT
-    Status: 200 OK
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 36
+Nota: Cuando se loguea correctamente, en la respuesta de la petición obtendra un token, este token debe agregarse a todas las peticiones que se van a mostrar en adelante, creando un header llamado authorization y en su valor agregando el token obtenido.
 
-    {"id":1,"name":"Foo","status":"new"}
-
-## Get a non-existent Thing
+## Obtener todos los usuarios
 
 ### Request
 
-`GET /thing/id`
+Metodo: GET
 
-    curl -i -H 'Accept: application/json' http://localhost:7000/thing/9999
+URL: http://localhost:8080/usuarios/v1
 
-### Response
+headers: Authorization: token de login
 
-    HTTP/1.1 404 Not Found
-    Date: Thu, 24 Feb 2011 12:36:30 GMT
-    Status: 404 Not Found
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 35
-
-    {"status":404,"reason":"Not found"}
-
-## Create another new Thing
+## Obtener usuario por id
 
 ### Request
 
-`POST /thing/`
+Metodo: GET
 
-    curl -i -H 'Accept: application/json' -d 'name=Bar&junk=rubbish' http://localhost:7000/thing
+URL: http://localhost:8080/usuarios/v1/id/{id}
 
-### Response
+headers: Authorization: token de login
 
-    HTTP/1.1 201 Created
-    Date: Thu, 24 Feb 2011 12:36:31 GMT
-    Status: 201 Created
-    Connection: close
-    Content-Type: application/json
-    Location: /thing/2
-    Content-Length: 35
+Nota: {id} es una notación para indicar que en esta parte de la ruta usted debe pegar el id que desea buscar.
 
-    {"id":2,"name":"Bar","status":null}
-
-## Get list of Things again
+## Obtener usuario por email
 
 ### Request
 
-`GET /thing/`
+Metodo: GET
 
-    curl -i -H 'Accept: application/json' http://localhost:7000/thing/
+URL: http://localhost:8080/usuarios/v1/email/{email}
 
-### Response
+headers: Authorization: token de login
 
-    HTTP/1.1 200 OK
-    Date: Thu, 24 Feb 2011 12:36:31 GMT
-    Status: 200 OK
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 74
+Nota: {email} es una notación para indicar que en esta parte de la ruta usted debe pegar el email que desea buscar.
 
-    [{"id":1,"name":"Foo","status":"new"},{"id":2,"name":"Bar","status":null}]
-
-## Change a Thing's state
+## Obtener usuario por nombre
 
 ### Request
 
-`PUT /thing/:id/status/changed`
+Metodo: GET
 
-    curl -i -H 'Accept: application/json' -X PUT http://localhost:7000/thing/1/status/changed
+URL: http://localhost:8080/usuarios/v1/nombre/{nombre}
 
-### Response
+headers: Authorization: token de login
 
-    HTTP/1.1 200 OK
-    Date: Thu, 24 Feb 2011 12:36:31 GMT
-    Status: 200 OK
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 40
+Nota: {nombre} es una notación para indicar que en esta parte de la ruta usted debe pegar el nombre que desea buscar.
 
-    {"id":1,"name":"Foo","status":"changed"}
-
-## Get changed Thing
+## Actualizar un usuario
 
 ### Request
 
-`GET /thing/id`
+Metodo: PATCH
 
-    curl -i -H 'Accept: application/json' http://localhost:7000/thing/1
+URL: http://localhost:8080/usuarios/v1/{id}
 
-### Response
+headers: Authorization: token de login
 
-    HTTP/1.1 200 OK
-    Date: Thu, 24 Feb 2011 12:36:31 GMT
-    Status: 200 OK
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 40
+Body JSON {
+    "email": String,
+	"password": String
+}
 
-    {"id":1,"name":"Foo","status":"changed"}
+Nota: {id} es una notación para indicar que en esta parte de la ruta usted debe pegar el id que desea actualizar. Tenga en cuenta que si actualiza el correo del usuario del cual esta usando el token, debera hacer loguin nuevamente para obtener el nuevo token y actualizar el token en todas las rutas que desee usar.
 
-## Change a Thing
+## Borrar un usuario
 
-### Request
+Metodo: PATCH
 
-`PUT /thing/:id`
+URL: http://localhost:8080/usuarios/v1/{id}
 
-    curl -i -H 'Accept: application/json' -X PUT -d 'name=Foo&status=changed2' http://localhost:7000/thing/1
+headers: Authorization: token de login
 
-### Response
-
-    HTTP/1.1 200 OK
-    Date: Thu, 24 Feb 2011 12:36:31 GMT
-    Status: 200 OK
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 41
-
-    {"id":1,"name":"Foo","status":"changed2"}
-
-## Attempt to change a Thing using partial params
-
-### Request
-
-`PUT /thing/:id`
-
-    curl -i -H 'Accept: application/json' -X PUT -d 'status=changed3' http://localhost:7000/thing/1
-
-### Response
-
-    HTTP/1.1 200 OK
-    Date: Thu, 24 Feb 2011 12:36:32 GMT
-    Status: 200 OK
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 41
-
-    {"id":1,"name":"Foo","status":"changed3"}
-
-## Attempt to change a Thing using invalid params
-
-### Request
-
-`PUT /thing/:id`
-
-    curl -i -H 'Accept: application/json' -X PUT -d 'id=99&status=changed4' http://localhost:7000/thing/1
-
-### Response
-
-    HTTP/1.1 200 OK
-    Date: Thu, 24 Feb 2011 12:36:32 GMT
-    Status: 200 OK
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 41
-
-    {"id":1,"name":"Foo","status":"changed4"}
-
-## Change a Thing using the _method hack
-
-### Request
-
-`POST /thing/:id?_method=POST`
-
-    curl -i -H 'Accept: application/json' -X POST -d 'name=Baz&_method=PUT' http://localhost:7000/thing/1
-
-### Response
-
-    HTTP/1.1 200 OK
-    Date: Thu, 24 Feb 2011 12:36:32 GMT
-    Status: 200 OK
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 41
-
-    {"id":1,"name":"Baz","status":"changed4"}
-
-## Change a Thing using the _method hack in the url
-
-### Request
-
-`POST /thing/:id?_method=POST`
-
-    curl -i -H 'Accept: application/json' -X POST -d 'name=Qux' http://localhost:7000/thing/1?_method=PUT
-
-### Response
-
-    HTTP/1.1 404 Not Found
-    Date: Thu, 24 Feb 2011 12:36:32 GMT
-    Status: 404 Not Found
-    Connection: close
-    Content-Type: text/html;charset=utf-8
-    Content-Length: 35
-
-    {"status":404,"reason":"Not found"}
-
-## Delete a Thing
-
-### Request
-
-`DELETE /thing/id`
-
-    curl -i -H 'Accept: application/json' -X DELETE http://localhost:7000/thing/1/
-
-### Response
-
-    HTTP/1.1 204 No Content
-    Date: Thu, 24 Feb 2011 12:36:32 GMT
-    Status: 204 No Content
-    Connection: close
-
-
-## Try to delete same Thing again
-
-### Request
-
-`DELETE /thing/id`
-
-    curl -i -H 'Accept: application/json' -X DELETE http://localhost:7000/thing/1/
-
-### Response
-
-    HTTP/1.1 404 Not Found
-    Date: Thu, 24 Feb 2011 12:36:32 GMT
-    Status: 404 Not Found
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 35
-
-    {"status":404,"reason":"Not found"}
-
-## Get deleted Thing
-
-### Request
-
-`GET /thing/1`
-
-    curl -i -H 'Accept: application/json' http://localhost:7000/thing/1
-
-### Response
-
-    HTTP/1.1 404 Not Found
-    Date: Thu, 24 Feb 2011 12:36:33 GMT
-    Status: 404 Not Found
-    Connection: close
-    Content-Type: application/json
-    Content-Length: 35
-
-    {"status":404,"reason":"Not found"}
-
-## Delete a Thing using the _method hack
-
-### Request
-
-`DELETE /thing/id`
-
-    curl -i -H 'Accept: application/json' -X POST -d'_method=DELETE' http://localhost:7000/thing/2/
-
-### Response
-
-    HTTP/1.1 204 No Content
-    Date: Thu, 24 Feb 2011 12:36:33 GMT
-    Status: 204 No Content
-    Connection: close
+Nota: {id} es una notación para indicar que en esta parte de la ruta usted debe pegar el id que desea borrar. Tenga en cuenta que si elimina el usuario del cual esta usando el token, debera hacer loguin nuevamente con usuario registrado para obtener el nuevo token y actualizar el token en todas las rutas que desee usar.
